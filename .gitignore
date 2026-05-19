@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Fichiers temporaires
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*~
+
+# Credentials et secrets
+*.env
+*.key
+*.pem
+*.pfx
+*.p12
+credentials.json
+secrets.*
+password*
+*_password*
+*_secret*
+
+# PowerShell
+*.ps1xml
+
+# VS Code
+.vscode/
+
+# Répertoires de travail locaux
+scratch/
+temp/
+tmp/

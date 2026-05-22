@@ -63,14 +63,15 @@ terraform apply -var="admin_password=<your-password>"
 
 ## Certifications
 
-| Certification | Phase | Status |
-|---|---|---|
-| CompTIA A+ (220-1201/1202) | 1 | 🔄 In progress |
-| CompTIA Network+ | 1 | ⏳ Planned |
-| SC-900 | 2 | ⏳ Planned |
-| AZ-104 | 3 | ⏳ Planned |
-| **AZ-500** ⭐ | **3 — Main target** | ⏳ Planned |
-| SC-200 | 3 | ⏳ Planned |
+| Certification | Relevance | Phase | Status |
+|---|---|---|---|
+| CompTIA A+ (220-1201/1202) | IT foundations | 1 | 🔄 In progress |
+| CompTIA Network+ | Network foundations | 1 | ⏳ Planned |
+| CompTIA Security+ | Security baseline (required by many employers) | 3 | ⏳ Planned |
+| AZ-104 — Azure Administrator | Azure prerequisite before AZ-500 | 3 | ⏳ Planned |
+| **AZ-500 — Azure Security Engineer** ⭐ | **Core Security Engineer cert** | **3** | ⏳ Planned |
+| SC-200 — Security Operations Analyst | Sentinel + Defender XDR | 3 | ⏳ Planned |
+| HashiCorp Terraform Associate | IaC security, DevSecOps | 4 | ⏳ Planned |
 
 ---
 

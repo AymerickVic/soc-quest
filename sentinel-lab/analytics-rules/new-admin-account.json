@@ -1,0 +1,28 @@
+{
+  "kind": "Scheduled",
+  "properties": {
+    "displayName": "New Local Admin Account Created",
+    "description": "Detects creation of a new local administrator account, a common persistence technique. Maps to MITRE ATT&CK T1136.001.",
+    "severity": "High",
+    "enabled": true,
+    "query": "SecurityEvent\n| where TimeGenerated > ago(1h)\n| where EventID == 4720\n| join kind=inner (\n    SecurityEvent\n    | where EventID == 4732\n    | where TargetUserName =~ \"Administrators\"\n    | project NewAccountName = SubjectUserName, GroupAddTime = TimeGenerated, AddedBy = SubjectUserName\n) on $left.TargetUserName == $right.NewAccountName\n| project\n    TimeGenerated,\n    NewAccount = TargetUserName,\n    CreatedBy = SubjectUserName,\n    Computer,\n    GroupAddTime,\n    TimeDelta = GroupAddTime - TimeGenerated",
+    "queryFrequency": "PT1H",
+    "queryPeriod": "PT1H",
+    "triggerOperator": "GreaterThan",
+    "triggerThreshold": 0,
+    "suppressionDuration": "PT5H",
+    "suppressionEnabled": false,
+    "tactics": ["Persistence"],
+    "techniques": ["T1136", "T1136.001"],
+    "entityMappings": [
+      {
+        "entityType": "Account",
+        "fieldMappings": [{ "identifier": "Name", "columnName": "NewAccount" }]
+      },
+      {
+        "entityType": "Host",
+        "fieldMappings": [{ "identifier": "HostName", "columnName": "Computer" }]
+      }
+    ]
+  }
+}

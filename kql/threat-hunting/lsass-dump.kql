@@ -1,0 +1,26 @@
+// ============================================================
+// LSASS Memory Dump Detection
+// ============================================================
+// Description : Detects attempts to dump LSASS process memory —
+//               used to extract credential hashes and plaintext passwords.
+// MITRE ATT&CK : T1003.001 — OS Credential Dumping: LSASS Memory
+// Data source  : DeviceProcessEvents + DeviceEvents (Defender for Endpoint)
+// Severity     : Critical
+// ============================================================
+
+// Method 1: Process accessing LSASS
+DeviceEvents
+| where TimeGenerated > ago(1h)
+| where ActionType == "LsassProcessAccess"
+| where InitiatingProcessFileName !in~ (
+    "MsMpEng.exe", "SenseIR.exe", "csrss.exe",
+    "werfault.exe", "WerFaultSecure.exe"
+)
+| project
+    TimeGenerated,
+    DeviceName,
+    AttackingProcess = InitiatingProcessFileName,
+    AttackingProcessPath = InitiatingProcessFolderPath,
+    AttackingUser = InitiatingProcessAccountName,
+    CommandLine = InitiatingProcessCommandLine
+| sort by TimeGenerated desc

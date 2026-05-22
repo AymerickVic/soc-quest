@@ -1,0 +1,52 @@
+// ============================================================
+// New Admin Account Created
+// ============================================================
+// Description : Detects creation of a new user account immediately
+//               followed by addition to a privileged group.
+//               Common persistence technique post-compromise.
+// MITRE ATT&CK : T1136.001 — Create Account: Local Account
+//                T1098 — Account Manipulation
+// Data source  : SecurityEvent
+// Severity     : High
+// ============================================================
+
+let lookback = 1h;
+let AdminGroups = dynamic([
+    "Administrators", "Domain Admins", "Enterprise Admins",
+    "Schema Admins", "Account Operators", "Backup Operators"
+]);
+
+// Account creation events
+let NewAccounts = SecurityEvent
+| where TimeGenerated > ago(lookback)
+| where EventID == 4720            // User account created
+| project
+    CreationTime = TimeGenerated,
+    NewAccount = TargetUserName,
+    CreatedBy = SubjectUserName,
+    Computer;
+
+// Group membership addition events
+let GroupAdditions = SecurityEvent
+| where TimeGenerated > ago(lookback)
+| where EventID == 4732            // Member added to security-enabled local group
+| where TargetUserName has_any (AdminGroups)
+| project
+    AddedTime = TimeGenerated,
+    AddedAccount = MemberName,
+    PrivilegedGroup = TargetUserName,
+    AddedBy = SubjectUserName;
+
+// Correlate — same account created AND added to privileged group
+NewAccounts
+| join kind=inner GroupAdditions
+    on $left.NewAccount == $right.AddedAccount
+| where AddedTime between (CreationTime .. CreationTime + lookback)
+| project
+    CreationTime,
+    NewAccount,
+    PrivilegedGroup,
+    CreatedBy,
+    AddedBy,
+    TimeBetweenEventsMinutes = datetime_diff('minute', AddedTime, CreationTime)
+| sort by CreationTime desc

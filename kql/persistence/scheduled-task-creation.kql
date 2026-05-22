@@ -1,0 +1,23 @@
+// ============================================================
+// Suspicious Scheduled Task Creation
+// ============================================================
+// Description : Detects scheduled task creation by non-system
+//               processes — common persistence and execution method.
+// MITRE ATT&CK : T1053.005 — Scheduled Task/Job: Scheduled Task
+// Data source  : SecurityEvent (EventID 4698) or DeviceProcessEvents
+// Severity     : Medium
+// ============================================================
+
+SecurityEvent
+| where TimeGenerated > ago(24h)
+| where EventID == 4698            // Scheduled task was created
+| extend TaskXml = EventData
+| where SubjectUserName !in ("SYSTEM", "LOCAL SERVICE", "NETWORK SERVICE")
+| where SubjectUserName !endswith "$"   // Exclude computer accounts
+| project
+    TimeGenerated,
+    Computer,
+    CreatedBy = SubjectUserName,
+    TaskName,
+    SubjectDomainName
+| sort by TimeGenerated desc

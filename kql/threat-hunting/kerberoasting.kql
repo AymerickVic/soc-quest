@@ -1,0 +1,25 @@
+// ============================================================
+// Kerberoasting Detection
+// ============================================================
+// Description : Detects Kerberoasting — attacker requests TGS tickets
+//               for service accounts using weak RC4 encryption (0x17),
+//               then cracks them offline.
+// MITRE ATT&CK : T1558.003 — Steal or Forge Kerberos Tickets: Kerberoasting
+// Data source  : SecurityEvent
+// Severity     : High
+// ============================================================
+
+SecurityEvent
+| where TimeGenerated > ago(1h)
+| where EventID == 4769                        // Kerberos Service Ticket request
+| where TicketEncryptionType == "0x17"         // RC4-HMAC = weak, preferred by attackers
+| where TicketOptions == "0x40810000"          // Forwardable + Renewable flags
+| where ServiceName !endswith "$"              // Exclude computer accounts
+| where ServiceName !in~ ("krbtgt", "kadmin")
+| where AccountName !endswith "$"
+| summarize
+    RequestCount = count(),
+    TargetServices = make_set(ServiceName),
+    SourceIPs = make_set(IpAddress)
+    by AccountName, bin(TimeGenerated, 5m)
+| sort by RequestCount desc

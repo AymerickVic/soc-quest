@@ -1,0 +1,42 @@
+// ============================================================
+// Brute Force Detection
+// ============================================================
+// Description : Detects more than 5 failed login attempts on the
+//               same account within a 5-minute window.
+// MITRE ATT&CK : T1110 — Brute Force
+// Data source  : SecurityEvent (Windows Event Logs via AMA)
+// Severity     : Medium → High depending on account type
+// ============================================================
+// Tuning notes :
+//   - Increase threshold (5) to reduce FP in environments with
+//     many shared workstations
+//   - Exclude service accounts if they generate noise
+// ============================================================
+
+let Threshold = 5;
+let TimeWindow = 5m;
+
+SecurityEvent
+| where TimeGenerated > ago(1h)
+| where EventID == 4625                          // Failed logon
+| where AccountType == "User"                    // Exclude computer accounts
+| where Account !in ("SYSTEM", "LOCAL SERVICE", "NETWORK SERVICE")
+| summarize
+    FailedAttempts = count(),
+    TargetAccounts = make_set(Account),
+    SourceIPs = make_set(IpAddress),
+    FirstAttempt = min(TimeGenerated),
+    LastAttempt = max(TimeGenerated)
+    by bin(TimeGenerated, TimeWindow), IpAddress, Computer
+| where FailedAttempts >= Threshold
+| extend Duration = LastAttempt - FirstAttempt
+| project
+    TimeGenerated,
+    Computer,
+    IpAddress,
+    FailedAttempts,
+    TargetAccounts,
+    FirstAttempt,
+    LastAttempt,
+    Duration
+| sort by FailedAttempts desc

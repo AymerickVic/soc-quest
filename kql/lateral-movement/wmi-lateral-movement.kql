@@ -1,0 +1,27 @@
+// ============================================================
+// WMI Lateral Movement Detection
+// ============================================================
+// Description : Detects suspicious processes spawned by WMI —
+//               common technique for remote code execution.
+// MITRE ATT&CK : T1021.006 — Remote Services: Windows Remote Management
+//                T1047 — Windows Management Instrumentation
+// Data source  : DeviceProcessEvents (Defender for Endpoint)
+// Severity     : High
+// ============================================================
+
+DeviceProcessEvents
+| where TimeGenerated > ago(1h)
+| where InitiatingProcessFileName =~ "WmiPrvSE.exe"
+| where FileName !in~ (
+    "WmiPrvSE.exe", "svchost.exe", "msiexec.exe",
+    "wsmprovhost.exe", "scrcons.exe"
+)
+| project
+    TimeGenerated,
+    DeviceName,
+    AccountName,
+    SpawnedProcess = FileName,
+    CommandLine = ProcessCommandLine,
+    InitiatingProcess = InitiatingProcessFileName,
+    InitiatingProcessCommandLine
+| sort by TimeGenerated desc

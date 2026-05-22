@@ -1,0 +1,29 @@
+// ============================================================
+// DNS Tunneling Detection
+// ============================================================
+// Description : Detects potential DNS tunneling by identifying
+//               abnormally long DNS queries or high query volume
+//               to a single domain — common exfiltration technique.
+// MITRE ATT&CK : T1048.003 — Exfiltration Over Alternative Protocol: DNS
+// Data source  : DnsEvents or AzureDiagnostics
+// Severity     : Medium → High
+// ============================================================
+
+DnsEvents
+| where TimeGenerated > ago(1h)
+| where SubType == "LookupQuery"
+// Long subdomains = likely encoded data
+| extend SubdomainLength = strlen(extract(@"^([^.]+)\.", 1, Name))
+| where SubdomainLength > 30
+    or strlen(Name) > 150
+// High query rate to same base domain
+| extend BaseDomain = extract(@"[^.]+\.[^.]+$", 0, Name)
+| summarize
+    QueryCount = count(),
+    UniqueSubs = dcount(Name),
+    AvgSubLength = avg(SubdomainLength),
+    SampleQueries = make_set(Name, 5),
+    Clients = make_set(ClientIP)
+    by BaseDomain, bin(TimeGenerated, 10m)
+| where QueryCount > 50 or UniqueSubs > 20
+| sort by QueryCount desc

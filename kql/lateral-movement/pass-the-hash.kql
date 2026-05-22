@@ -1,0 +1,34 @@
+// ============================================================
+// Pass-the-Hash Detection
+// ============================================================
+// Description : Detects Pass-the-Hash by looking for NTLM
+//               network logons (type 3) with blank passwords —
+//               characteristic of PtH attacks.
+// MITRE ATT&CK : T1550.002 — Use Alternate Authentication Material: PtH
+// Data source  : SecurityEvent
+// Severity     : High
+// ============================================================
+
+SecurityEvent
+| where TimeGenerated > ago(1h)
+| where EventID == 4624                         // Successful logon
+| where LogonType == 3                          // Network logon
+| where AuthenticationPackageName == "NTLM"    // NTLM only (not Kerberos)
+| where AccountType == "User"
+| where Account !endswith "$"                   // Exclude computer accounts
+| where Account !in ("ANONYMOUS LOGON")
+| where isnotempty(WorkstationName)
+| summarize
+    Count = count(),
+    TargetComputers = make_set(Computer),
+    SourceWorkstations = make_set(WorkstationName)
+    by Account, IpAddress, bin(TimeGenerated, 15m)
+| where Count > 3                               // Multiple NTLM network logons = suspicious
+| project
+    TimeGenerated,
+    Account,
+    IpAddress,
+    Count,
+    TargetComputers,
+    SourceWorkstations
+| sort by Count desc

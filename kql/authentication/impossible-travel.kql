@@ -1,0 +1,43 @@
+// ============================================================
+// Impossible Travel Detection
+// ============================================================
+// Description : Detects a user signing in from two different countries
+//               within a timeframe that is physically impossible to travel.
+// MITRE ATT&CK : T1078 — Valid Accounts (account compromise indicator)
+// Data source  : SigninLogs (Entra ID)
+// Severity     : High
+// ============================================================
+
+let MaxTravelTimeMinutes = 120;    // 2 hours — adjust based on org geography
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType == 0            // Successful sign-ins only
+| where isnotempty(Location)
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    IPAddress,
+    Location,
+    CountryOrRegion = tostring(LocationDetails.countryOrRegion),
+    City = tostring(LocationDetails.city)
+| order by UserPrincipalName asc, TimeGenerated asc
+| serialize
+| extend
+    PrevTime = prev(TimeGenerated, 1),
+    PrevCountry = prev(CountryOrRegion, 1),
+    PrevUser = prev(UserPrincipalName, 1),
+    PrevIP = prev(IPAddress, 1)
+| where UserPrincipalName == PrevUser
+| where CountryOrRegion != PrevCountry
+| extend MinutesBetweenLogins = datetime_diff('minute', TimeGenerated, PrevTime)
+| where MinutesBetweenLogins <= MaxTravelTimeMinutes
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    CurrentCountry = CountryOrRegion,
+    CurrentIP = IPAddress,
+    PreviousCountry = PrevCountry,
+    PreviousIP = PrevIP,
+    MinutesBetweenLogins
+| sort by TimeGenerated desc

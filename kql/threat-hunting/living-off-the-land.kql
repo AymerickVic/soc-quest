@@ -1,0 +1,36 @@
+// ============================================================
+// Living off the Land (LOtL) Binaries Detection
+// ============================================================
+// Description : Detects abuse of legitimate Windows binaries
+//               to download payloads or execute code — used to
+//               evade AV detection.
+// MITRE ATT&CK : T1218 — System Binary Proxy Execution
+//                T1059.001 — PowerShell
+// Data source  : DeviceProcessEvents or SecurityEvent (4688)
+// Severity     : Medium → High
+// ============================================================
+
+let LOtLBinaries = dynamic([
+    "certutil.exe",    // Download files: certutil -urlcache -f http://...
+    "regsvr32.exe",    // Execute DLL: regsvr32 /s /n /u /i:http://... scrobj.dll
+    "mshta.exe",       // Execute HTA: mshta http://...
+    "wscript.exe",     // Execute VBS
+    "cscript.exe",     // Execute VBS/JS
+    "bitsadmin.exe",   // Download files
+    "rundll32.exe",    // Execute DLL
+    "msiexec.exe"      // Install MSI from URL
+]);
+
+DeviceProcessEvents
+| where TimeGenerated > ago(24h)
+| where FileName in~ (LOtLBinaries)
+| where ProcessCommandLine has_any ("http://", "https://", "ftp://", "\\\\")
+| project
+    TimeGenerated,
+    DeviceName,
+    AccountName,
+    BinaryAbused = FileName,
+    CommandLine = ProcessCommandLine,
+    ParentProcess = InitiatingProcessFileName,
+    ParentCommandLine = InitiatingProcessCommandLine
+| sort by TimeGenerated desc

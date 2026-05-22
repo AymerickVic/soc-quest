@@ -1,0 +1,24 @@
+# Fichiers Terraform à ne JAMAIS pousser sur GitHub
+
+# State files — contiennent l'état réel de ton infra + données sensibles
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+
+# Dossier des plugins téléchargés — trop lourd, inutile sur Git
+.terraform/
+.terraform.lock.hcl
+
+# Fichiers de variables sensibles
+*.tfvars
+*.tfvars.json
+
+# Fichiers de plan sauvegardé (peuvent contenir des secrets)
+*.tfplan
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

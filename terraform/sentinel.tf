@@ -8,8 +8,8 @@ resource "azurerm_log_analytics_workspace" "sentinel_lab" {
   name                = "sentinel-lab"
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
-  sku                 = "PerGB2018"   # paiement à la quantité de données
-  retention_in_days   = 30           # logs gardés 30 jours (gratuit jusqu'à 90 jours)
+  sku                 = "PerGB2018" # paiement à la quantité de données
+  retention_in_days   = 30          # logs gardés 30 jours (gratuit jusqu'à 90 jours)
 
   tags = { Créé_par = "Terraform" }
 }

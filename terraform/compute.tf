@@ -8,7 +8,7 @@ resource "azurerm_windows_virtual_machine" "client01" {
   location            = azurerm_resource_group.lab.location
   size                = "Standard_B2as_v2"
   admin_username      = var.admin_username
-  admin_password      = var.admin_password  # variable sensible, jamais en clair
+  admin_password      = var.admin_password # variable sensible, jamais en clair
 
   # La NIC créée dans network.tf
   network_interface_ids = [azurerm_network_interface.client01_nic.id]

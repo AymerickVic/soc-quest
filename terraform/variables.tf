@@ -27,6 +27,6 @@ variable "admin_username" {
 variable "admin_password" {
   description = "Mot de passe admin — ne jamais mettre en clair dans le code !"
   type        = string
-  sensitive   = true  # Terraform masque cette valeur dans les logs
+  sensitive   = true # Terraform masque cette valeur dans les logs
   # On le passera via : terraform apply -var="admin_password=..."
 }

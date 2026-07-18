@@ -24,7 +24,7 @@ Transitioning to **Security Engineer** — specializing in Azure cloud security,
 
 ```mermaid
 graph TB
-    subgraph Azure["☁️ Azure — canadacentral"]
+    subgraph Azure["Azure — canadacentral"]
         subgraph RG["Resource Group: SOC-QUEST-LAB"]
             subgraph VNET["VNet: 10.0.0.0/16"]
                 NIC["NIC + Public IP"]
@@ -76,12 +76,12 @@ Home lab running on Azure — fully reproducible via Terraform.
 
 | Component | Status |
 |---|---|
-| Entra ID | ✅ Users, groups, RBAC configured |
-| Microsoft Sentinel | ✅ 5 analytics rules + 4 data connectors |
-| Defender XDR | ✅ Unified security portal |
-| CLIENT01 (Win11 Pro) | ✅ Entra ID joined |
-| Infrastructure as Code | ✅ Full lab deployable in ~5 min |
-| Analytics Rules as Code | ✅ JSON-deployable Sentinel rules |
+| Entra ID | Users, groups, RBAC configured |
+| Microsoft Sentinel | 5 analytics rules + 4 data connectors |
+| Defender XDR | Unified security portal |
+| CLIENT01 (Win11 Pro) | Entra ID joined |
+| Infrastructure as Code | Full lab deployable in ~5 min |
+| Analytics Rules as Code | JSON-deployable Sentinel rules |
 
 **Rebuild the entire lab from scratch:**
 ```bash
@@ -115,11 +115,11 @@ terraform apply -var="admin_password=<your-password>"
 
 | Certification | Relevance | Status |
 |---|---|---|
-| CompTIA A+ (220-1201/1202) | IT foundations | 🔄 In progress |
+| CompTIA A+ (220-1201/1202) | IT foundations | In progress |
 | CompTIA Network+ | Network foundations | ⏳ Planned |
 | CompTIA Security+ | Security baseline | ⏳ Planned |
 | AZ-104 — Azure Administrator | Azure prerequisite | ⏳ Planned |
-| **AZ-500 — Azure Security Engineer** ⭐ | **Core cert** | ⏳ Planned |
+| **AZ-500 — Azure Security Engineer** | **Core cert** | ⏳ Planned |
 | SC-200 — Security Operations Analyst | Sentinel + Defender XDR | ⏳ Planned |
 | HashiCorp Terraform Associate | IaC / DevSecOps | ⏳ Planned |
 

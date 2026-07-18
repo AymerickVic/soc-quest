@@ -1,7 +1,7 @@
 # Incident Write-up — Ransomware IR (Blue Team Labs Online)
 
 **Platform:** Blue Team Labs Online  
-**Difficulty:** ⭐⭐⭐⭐  
+**Difficulty:**   
 **Category:** Incident Response / Ransomware  
 **Date:** 2026-05
 

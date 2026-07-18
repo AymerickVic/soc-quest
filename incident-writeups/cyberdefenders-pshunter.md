@@ -1,7 +1,7 @@
 # Incident Write-up — PSHunter (CyberDefenders)
 
 **Platform:** CyberDefenders  
-**Difficulty:** ⭐⭐⭐  
+**Difficulty:**   
 **Category:** Windows Forensics / PowerShell  
 **Date:** 2026-05
 

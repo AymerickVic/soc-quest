@@ -17,20 +17,20 @@ Azure Tenant: mim972live.onmicrosoft.com
 
 | Connector | Status | Table |
 |---|---|---|
-| Azure Activity Logs | ✅ Active | `AzureActivity` |
-| Microsoft Defender XDR | ✅ Active | `SecurityAlert` |
-| Entra ID Audit Logs | ✅ Active | `AuditLogs` |
-| Windows Security Events (AMA) | ✅ Active | `SecurityEvent` |
+| Azure Activity Logs | Active | `AzureActivity` |
+| Microsoft Defender XDR | Active | `SecurityAlert` |
+| Entra ID Audit Logs | Active | `AuditLogs` |
+| Windows Security Events (AMA) | Active | `SecurityEvent` |
 
 ## Analytics Rules Deployed
 
 | Rule | Tactic | Severity | Status |
 |---|---|---|---|
-| Password Spray Detection | Credential Access | High | ✅ Active |
-| Brute Force on Windows | Credential Access | Medium | ✅ Active |
-| New Admin Account Created | Persistence | High | ✅ Active |
-| Suspicious PowerShell Execution | Execution | Medium | ✅ Active |
-| Off-Hours Sign-in | Initial Access | Low | ✅ Active |
+| Password Spray Detection | Credential Access | High | Active |
+| Brute Force on Windows | Credential Access | Medium | Active |
+| New Admin Account Created | Persistence | High | Active |
+| Suspicious PowerShell Execution | Execution | Medium | Active |
+| Off-Hours Sign-in | Initial Access | Low | Active |
 
 ## Rebuild
 
